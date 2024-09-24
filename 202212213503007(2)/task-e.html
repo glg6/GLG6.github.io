@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>任务E</title>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+    #version 300 es
+    in vec4 vPosition;
+    void main(){
+    	gl_Position = vPosition;
+    }
+    </script>
+    
+    <script id="fragment-shader" type="x-shader/x-fragment">
+    #version 300 es
+    precision mediump float;
+    out vec4 fColor;
+    void main(){
+    	fColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+    }
+    </script>
+    
+    <script type="text/javascript" src="common/webgl-utils.js"></script>
+    <script type="text/javascript" src="common/initShaders.js"></script>
+    <script type="text/javascript" src="common/gl-matrix-min.js"></script>
+    
+    <script type="text/javascript" src="js/triangle-tessa3.js"></script>
+</head>
+<body>
+    <canvas id="gl-canvas" width="500" height="500"></canvas>
+    <div>
+        <label for="subdivisionLevel">细分级别:</label>
+        <input type="range" id="subdivisionLevel" min="0" max="5" value="3">
+        <span id="levelDisplay">3</span>
+    </div>
+    <div>
+        <label for="rotationAngle">旋转角度:</label>
+        <input type="range" id="rotationAngle" min="0" max="360" value="0">
+    </div>
+</body>
+</html>
