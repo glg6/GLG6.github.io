@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快乐与友谊</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87CEFA; /* 天空蓝 */
+        }
+
+        #bird {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: yellow; /* 小鸟的颜色 */
+            border-radius: 50%;
+            transition: transform 0.2s; /* 动画效果 */
+        }
+
+        .star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: gold; /* 星星的颜色 */
+            border-radius: 50%;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="bird"></div>
+    <div id="score">快乐值: 0</div>
+
+    <script>
+        const bird = document.getElementById('bird');
+        const scoreDisplay = document.getElementById('score');
+        let score = 0;
+
+        // 随机生成星星
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.top = Math.random() * (window.innerHeight - 20) + 'px';
+            star.style.left = Math.random() * (window.innerWidth - 20) + 'px';
+            document.body.appendChild(star);
+
+            // 点击星星后，星星消失并增加快乐值
+            star.addEventListener('click', function() {
+                score++;
+                scoreDisplay.textContent = `快乐值: ${score}`;
+                star.remove();
+            });
+        }
+
+        // 每秒创建一颗星星
+        setInterval(createStar, 1000);
+
+        // 鼠标点击小鸟时进行飞翔
+        document.addEventListener('click', function(event) {
+            const x = event.clientX - 25; // 使小鸟居中
+            const y = event.clientY - 25;
+            bird.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        // 初始化小鸟位置
+        bird.style.transform = `translate(${window.innerWidth / 2 - 25}px, ${window.innerHeight / 2 - 25}px)`;
+    </script>
+</body>
+</html>
