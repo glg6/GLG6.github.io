@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotate the Square</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+            width: 500px;
+            height: 500px;
+            position: relative;
+            perspective: 800px; 
+        }
+
+        .square {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            position: absolute;
+            left: 50px;
+            top: 100px;
+            transform-style: preserve-3d; 
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="canvas">
+</div>
+
+<div class="controls">
+    <button onclick="rotateSquare(10, 0)">绕X轴旋转</button>
+    <button onclick="rotateSquare(-10, 0)">逆向绕X轴旋转</button>
+    <button onclick="rotateSquare(0, 10)">绕Y轴旋转</button>
+    <button onclick="rotateSquare(0, -10)">逆向绕Y轴旋转</button>
+</div>
+
+<script>
+    let rotateX = 0;
+    let rotateY = 0;
+    let square;
+
+    function drawSquare() {
+        square = document.createElement('div');
+        square.classList.add('square');
+        document.getElementById('canvas').appendChild(square);
+    }
+
+    function updateRotation() {
+        square.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+
+    function rotateSquare(deltaX, deltaY) {
+        rotateX += deltaX;
+        rotateY += deltaY;
+        updateRotation();
+    }
+
+    drawSquare();
+</script>
+
+</body>
+</html>

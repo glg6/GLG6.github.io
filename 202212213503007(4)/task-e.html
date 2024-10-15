@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Scene</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="animationCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('animationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let square = {
+            x: 100,
+            y: 100,
+            size: 50,
+            dx: 2,
+            dy: 2,
+            rotation: 0
+        };
+
+        let circle = {
+            x: 200,
+            y: 200,
+            radius: 30,
+            dx: 3,
+            dy: 3,
+            scale: 1
+        };
+
+        let triangle = {
+            x: 300,
+            y: 300,
+            size: 60,
+            rotation: 0
+        };
+
+        function drawSquare() {
+            ctx.save();
+            ctx.translate(square.x + square.size / 2, square.y + square.size / 2);
+            ctx.rotate(square.rotation);
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+            ctx.fillRect(-square.size / 2, -square.size / 2, square.size, square.size);
+            ctx.restore();
+        }
+
+        function drawCircle() {
+            ctx.save();
+            ctx.translate(circle.x, circle.y);
+            ctx.scale(circle.scale, circle.scale);
+            ctx.fillStyle = 'rgba(0, 0, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(0, 0, circle.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawTriangle() {
+            ctx.save();
+            ctx.translate(triangle.x, triangle.y);
+            ctx.rotate(triangle.rotation);
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.8)';
+            ctx.beginPath();
+            ctx.moveTo(0, -triangle.size / 2);
+            ctx.lineTo(triangle.size / 2, triangle.size / 2);
+            ctx.lineTo(-triangle.size / 2, triangle.size / 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function update() {
+            square.x += square.dx;
+            square.y += square.dy;
+            square.rotation += 0.02;
+
+            if (square.x + square.size > canvas.width || square.x < 0) {
+                square.dx *= -1;
+            }
+            if (square.y + square.size > canvas.height || square.y < 0) {
+                square.dy *= -1;
+            }
+
+            circle.x += circle.dx;
+            circle.y += circle.dy;
+            circle.scale = 1 + Math.sin(Date.now() / 500) * 0.5;
+
+            if (circle.x + circle.radius > canvas.width || circle.x - circle.radius < 0) {
+                circle.dx *= -1;
+            }
+            if (circle.y + circle.radius > canvas.height || circle.y - circle.radius < 0) {
+                circle.dy *= -1;
+            }
+
+            triangle.rotation += 0.03;
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawSquare();
+            drawCircle();
+            drawTriangle();
+
+            update();
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

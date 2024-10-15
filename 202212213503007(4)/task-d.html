@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scale the Square</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+            width: 500px;
+            height: 500px;
+            position: relative;
+        }
+
+        .square {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            position: absolute;
+            left: 50px;
+            top: 100px;
+            transform-origin: center;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="canvas">
+</div>
+
+<div class="controls">
+    <button onclick="scaleSquare(0.1, 0)">X轴放大</button>
+    <button onclick="scaleSquare(-0.1, 0)">X轴缩小</button>
+    <button onclick="scaleSquare(0, 0.1)">Y轴放大</button>
+    <button onclick="scaleSquare(0, -0.1)">Y轴缩小</button>
+</div>
+
+<script>
+    let scaleX = 1;
+    let scaleY = 1;
+    let square;
+
+    function drawSquare() {
+        square = document.createElement('div');
+        square.classList.add('square');
+        document.getElementById('canvas').appendChild(square);
+    }
+
+    function updateScale() {
+        square.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
+    }
+
+    function scaleSquare(deltaX, deltaY) {
+        scaleX += deltaX;
+        scaleY += deltaY;
+        updateScale();
+    }
+
+    drawSquare();
+</script>
+
+</body>
+</html>
