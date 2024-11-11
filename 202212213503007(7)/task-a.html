@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绘制球体</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawSphere(radius, segments) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            for (let lat = -90; lat <= 90; lat += 180 / segments) {
+                for (let long = 0; long < 360; long += 360 / segments) {
+                    let x1 = centerX + radius * Math.cos(lat * Math.PI / 180) * Math.cos(long * Math.PI / 180);
+                    let y1 = centerY + radius * Math.cos(lat * Math.PI / 180) * Math.sin(long * Math.PI / 180);
+
+                    let x2 = centerX + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.cos((long + 360 / segments) * Math.PI / 180);
+                    let y2 = centerY + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.sin((long + 360 / segments) * Math.PI / 180);
+
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // 调用函数绘制球体
+        drawSphere(200, 10);
+    </script>
+</body>
+</html>

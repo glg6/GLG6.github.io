@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phong光照模型</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const lightSource = { x: 300, y: 100 };
+
+        const sphereCenter = { x: 250, y: 250 };
+        const sphereRadius = 100;
+
+        const ambientLightIntensity = 0.2;
+        const diffuseReflectance = 0.7;
+        const specularReflectance = 0.5;
+        const shininessCoefficient = 50;
+
+        function drawSphere(radius, segments) {
+            const centerX = sphereCenter.x;
+            const centerY = sphereCenter.y;
+
+            for (let lat = -90; lat <= 90; lat += 180 / segments) {
+                for (let long = 0; long < 360; long += 360 / segments) {
+                    let x1 = centerX + radius * Math.cos(lat * Math.PI / 180) * Math.cos(long * Math.PI / 180);
+                    let y1 = centerY + radius * Math.cos(lat * Math.PI / 180) * Math.sin(long * Math.PI / 180);
+
+                    let x2 = centerX + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.cos((long + 360 / segments) * Math.PI / 180);
+                    let y2 = centerY + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.sin((long + 360 / segments) * Math.PI / 180);
+
+                    let x3 = centerX + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.cos((long + 360 / segments + 360 / segments) * Math.PI / 180);
+                    let y3 = centerY + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.sin((long + 360 / segments + 360 / segments) * Math.PI / 180);
+
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineTo(x3, y3);
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function calculateNormal(x, y) {
+            const dx = x - sphereCenter.x;
+            const dy = y - sphereCenter.y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            return { x: dx / d, y: dy / d };
+        }
+
+        function calculateLighting(normal, lightDirection) {
+            const dotProduct = normal.x * lightDirection.x + normal.y * lightDirection.y;
+            const ambient = ambientLightIntensity;
+            const diffuse = Math.max(dotProduct, 0) * diffuseReflectance;
+            const specular = Math.pow(Math.max(0, dotProduct), shininessCoefficient) * specularReflectance;
+
+            return ambient + diffuse + specular;
+        }
+
+        function drawLightedSphere(radius, segments) {
+            const lightDirection = {
+                x: lightSource.x - sphereCenter.x,
+                y: lightSource.y - sphereCenter.y
+            };
+            const lightMagnitude = Math.sqrt(lightDirection.x * lightDirection.x + lightDirection.y * lightDirection.y);
+            lightDirection.x /= lightMagnitude;
+            lightDirection.y /= lightMagnitude;
+
+            for (let lat = -90; lat <= 90; lat += 180 / segments) {
+                for (let long = 0; long < 360; long += 360 / segments) {
+                    let x1 = sphereCenter.x + radius * Math.cos(lat * Math.PI / 180) * Math.cos(long * Math.PI / 180);
+                    let y1 = sphereCenter.y + radius * Math.cos(lat * Math.PI / 180) * Math.sin(long * Math.PI / 180);
+
+                    let x2 = sphereCenter.x + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.cos((long + 360 / segments) * Math.PI / 180);
+                    let y2 = sphereCenter.y + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.sin((long + 360 / segments) * Math.PI / 180);
+
+                    let x3 = sphereCenter.x + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.cos((long + 360 / segments + 360 / segments) * Math.PI / 180);
+                    let y3 = sphereCenter.y + radius * Math.cos((lat + 180 / segments) * Math.PI / 180) * Math.sin((long + 360 / segments + 360 / segments) * Math.PI / 180);
+
+                    let normal1 = calculateNormal(x1, y1);
+                    let normal2 = calculateNormal(x2, y2);
+                    let normal3 = calculateNormal(x3, y3);
+
+                    let intensity1 = calculateLighting(normal1, lightDirection);
+                    let intensity2 = calculateLighting(normal2, lightDirection);
+                    let intensity3 = calculateLighting(normal3, lightDirection);
+
+                    ctx.fillStyle = `rgb(${intensity1 * 255}, ${intensity1 * 255}, ${intensity1 * 255})`;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineTo(x3, y3);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        }
+
+        drawLightedSphere(100, 10);
+    </script>
+</body>
+</html>
