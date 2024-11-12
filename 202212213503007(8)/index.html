@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chessboard Texture on Sphere</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        function createCheckerboardTexture(size) {
+            var canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            var context = canvas.getContext('2d');
+            var color1 = '#ffffff';
+            var color2 = '#000000';
+
+            for (var y = 0; y < size; y++) {
+                for (var x = 0; x < size; x++) {
+                    if ((x + y) % 2 === 0) {
+                        context.fillStyle = color1;
+                    } else {
+                        context.fillStyle = color2;
+                    }
+                    context.fillRect(x, y, 1, 1);
+                }
+            }
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        var checkerboardTexture = createCheckerboardTexture(128);
+        var geometrySphere = new THREE.SphereGeometry(1, 32, 32);
+        var materialSphere = new THREE.MeshBasicMaterial({ map: checkerboardTexture });
+        var sphere = new THREE.Mesh(geometrySphere, materialSphere);
+        scene.add(sphere);
+
+        var geometryCylinder = new THREE.CylinderGeometry(1, 1, 2, 32, 1, true);
+        var materialCylinder = new THREE.MeshBasicMaterial({ map: checkerboardTexture });
+        var cylinder = new THREE.Mesh(geometryCylinder, materialCylinder);
+        cylinder.position.y = -1.5; 
+        scene.add(cylinder);
+
+        camera.position.z = 2.5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', function () {
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
