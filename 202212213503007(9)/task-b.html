@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Object with Textures</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #controls { position: absolute; top: 10px; left: 10px; z-index: 100; background-color: rgba(255, 255, 255, 0.8); padding: 10px; }
+    </style>
+</head>
+<body>
+<div id="controls">
+    <label for="texture-select">选择纹理:</label>
+    <select id="texture-select">
+        <option value="textures/wood.jpg">木纹纹理</option>
+        <option value="textures/marble.jpg">大理石纹理</option>
+    </select>
+
+    <br><br>
+
+    <label for="color-mix">颜色混合:</label>
+    <input type="range" id="color-mix" min="0" max="1" step="0.01" value="0.5">
+
+    <br><br>
+
+    <label for="bump-select">选择凸凹纹理:</label>
+    <select id="bump-select">
+        <option value="textures/wood_bump.jpg">木纹凸凹纹理</option>
+        <option value="textures/marble_bump.jpg">大理石凸凹纹理</option>
+    </select>
+
+    <br><br>
+
+    <label for="bump-scale">凸凹系数:</label>
+    <input type="number" id="bump-scale" value="0.05">
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    let scene, camera, renderer, cube, material, textureLoader, bumpTextureLoader;
+
+    init();
+    animate();
+
+    function init() {
+        // 创建场景
+        scene = new THREE.Scene();
+
+        // 设置相机
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        // 创建渲染器
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 创建立方体几何体
+        const geometry = new THREE.BoxGeometry(2, 2, 2);
+
+        // 创建纹理加载器
+        textureLoader = new THREE.TextureLoader();
+        bumpTextureLoader = new THREE.TextureLoader();
+
+        // 创建材质
+        material = new THREE.MeshStandardMaterial({
+            map: null, // 初始时没有纹理
+            bumpMap: null, // 初始时没有凸凹纹理
+            roughness: 0.5,
+            metalness: 0.5
+        });
+
+        // 创建立方体
+        cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        // 添加光源
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5).normalize();
+        scene.add(light);
+
+        // 添加事件监听器以处理纹理选择
+        document.getElementById('texture-select').addEventListener('change', handleTextureChange);
+        document.getElementById('bump-select').addEventListener('change', handleBumpChange);
+        document.getElementById('color-mix').addEventListener('input', handleColorMixChange);
+    }
+
+    function handleTextureChange(event) {
+        const texturePath = event.target.value;
+        const texture = textureLoader.load(texturePath);
+        material.map = texture;
+        material.needsUpdate = true;
+    }
+
+    function handleBumpChange(event) {
+        const bumpPath = event.target.value;
+        const bumpTexture = bumpTextureLoader.load(bumpPath);
+        material.bumpMap = bumpTexture;
+        material.bumpScale = parseFloat(document.getElementById('bump-scale').value);
+        material.needsUpdate = true;
+    }
+
+    function handleColorMixChange(event) {
+        const mixValue = parseFloat(event.target.value);
+        material.metalness = mixValue;
+        material.roughness = 1 - mixValue;
+        material.needsUpdate = true;
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // 旋转立方体
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+    }
+</script>
+</body>
+</html>
